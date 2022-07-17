@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+
+        <style>
+            .heading {
+                width: 100%;
+                text-align: center;
+            }
+
+            .heading-h1 {
+                text-align: center;
+            }
+
+            .grid-container {
+                display: inline-grid;
+                grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1.5fr;
+                background-color: #ffffff;
+                width: 60%;
+                margin-left: 20%;
+                padding: 2px;
+            }
+
+            .grid-container > div {
+                text-align: center;
+                padding: 10px 0;
+                user-select: none;
+                font-size: 12px;
+            }
+
+            .numbers, .alphabets {
+                background-color: white;
+                color: #767676;
+                font-weight: bold;
+            }
+            .alphabets {
+                line-height: 20px;
+            }
+
+            .parking-available {
+                background-color: #71db80;
+                border: 4px solid #fff;
+                border-radius: 8px;
+            }
+            .parking-available:hover {
+                cursor: pointer;
+                background-color: #8af399;
+            }
+            .parking-unavailable {
+                background-color: #db7171;
+                border: 4px solid #fff;
+                border-radius: 8px;
+                color: white;
+            }
+            .parking-unavailable:hover {
+                background-color: #ec8686;
+                cursor: pointer;
+            }
+            .road {
+                background-color: #767676;
+                color: white;
+            }
+            .nothing {
+                background-color: white;
+                color: white;
+            }
+
+            .error-class {
+                width: 100%;
+                text-align: center;
+                font-size: 25px;
+                color: #e20000;
+            }
+        </style>
+
+    </head>
+
+    <body>
+
+        <div class="heading">
+            <h1 id="main" class="heading-h1">Parker: The Sensor Simulation</h1>
+        </div>
+
+        <div id="main-parking" class="grid-container">
+        </div>
+
+        <script>
+            const parking = document.getElementById("main-parking");
+
+            // Function to generating the layout of the parking
+            function setParking(parkingStruct) {
+                parking.innerHTML = "";
+
+                // For adding a row of numbers on the top
+                for (let i=0; i<parkingStruct[0].length + 1; i++) {
+                    parking.innerHTML = parking.innerHTML + "<div class='numbers'>" + i + "</div>";
+                }
+
+                let parkingNo = 65;
+                for (let i=0; i<parkingStruct.length - 1; i++) {
+                    parking.innerHTML = parking.innerHTML + "<div class='alphabets'>" + String.fromCharCode(parkingNo) + "</div>";
+                    parkingNo = parkingNo + 1;
+                    for (let j=0; j<parkingStruct[0].length; j++) {
+                        let classname = "";
+                        let value = "";
+                        if (parkingStruct[i][j] === "pa") {
+                            classname = "parking-available";
+                            value = "A";
+                        } else if (parkingStruct[i][j] === "pn") {
+                            classname = "parking-unavailable";
+                            value = "NA";
+                        } else if (parkingStruct[i][j][0] === 'r' || parkingStruct[i][j][0] === 's') {
+                            classname = "road";
+                            if (parkingStruct[i][j][1] === 'v') {
+                                value = "|";
+                            } else {
+                                value = "- -";
+                            }
+                        } else {
+                            classname = "nothing";
+                            value = "X";
+                        }
+                        parking.innerHTML = parking.innerHTML + "<div id='" + i + "-" + j + "' class='" + classname + "' onClick=\"updateParking(this.id);\">" + value + "</div>"
+                    }
+                }
+            }
+
+            function updateParking(id) {
+                let coordinates = id.split("-");
+                let x = coordinates[0];
+                let y = coordinates[1];
+                let setValue = ""
+                if (parkingGrid[x][y] === "pa") {
+                    setValue = "pn";
+                } else if (parkingGrid[x][y] === "pn") {
+                    setValue = "pa";
+                } else {
+                    setValue = parkingGrid[x][y];
+                }
+                setParkingStatus(id, setValue);
+                httpGet();
+            }
+
+            let parkingGrid = "";
+
+            // Send a GET request to the server for fetching the current parking area
+            function httpGet() {
+
+                const url = "http://192.168.0.203:8080/getparking";
+                const headers = {};
+
+                return fetch(url, {
+                    method : "GET",
+                    mode: 'cors',
+                    headers: headers
+                })
+                    .then((response) => {
+
+                        if (!response.ok) {
+                            parking.innerHTML = "Server not found.";
+                            throw new Error(response.error)
+                        }
+
+                        // Set the value of the response from server to the local variable so that UI can be updated
+                        response.text().then(function (text) {
+                            let tmp = (text.split("+"));
+                            parkingGrid = [];
+                            for (let i=0; i<tmp.length; i++) {
+                                parkingGrid.push(tmp[i].split('-'));
+                            }
+                            setParking(parkingGrid);
+                        });
+
+                        return response.json();
+
+                    })
+                    .then(data => {
+
+                        parking.innerHTML = "Server not found.";
+
+                    })
+                    .catch(function(error) {
+
+                        if (error.length > 0) {
+                            parking.innerHTML = "Server not found: " + error;
+                            parking.className = "error-class";
+                        }
+
+                    });
+            }
+            httpGet();
+
+            // Set the status of a particular parking spot in the server-side that the admin can change from the UI by sending a GET request
+            function setParkingStatus(coordinates, value) {
+                const url = "http://192.168.0.203:8080/setParking?coordinates=" + coordinates + "&status=" + value;
+                const headers = {};
+
+                return fetch(url, {method : "GET", mode: 'cors', headers: headers}).then((response) => response.json());
+            }
+
+        </script>
+    </body>
+</html>

@@ -1,4 +1,13 @@
+# Parker Smart Parking Assistant
+
 Parker is an automatic Smart Parking Assistant (SPA) that will completely handle the working of a parking lot.
+
+![CSE564-Parker-Presentation](https://github.com/patelb268/Parker-Smart-Parking-Assistant/assets/109325051/13879798-6d41-42c8-a64d-e048e21cc565)
+
+
+https://github.com/patelb268/Parker-Smart-Parking-Assistant/assets/109325051/7829d24f-1e89-45d2-b8b7-8b1a298b7254
+
+## Features
 
 It has the following features:
 * Customized user login
@@ -9,7 +18,7 @@ It has the following features:
 
 Sensors: For the 404 parkings, Parker will be using an array of 404 proximity sensors and those sensors will detect if there is any car parked in the parking or not. Using this information, the server fetch the nearest available parking using BFS in the grid.
 
-<----------------------------------installation instructions--------------------------------->
+## installation instructions
 
 #### Required tools
 
@@ -32,3 +41,10 @@ Sensors: For the 404 parkings, Parker will be using an array of 404 proximity se
 * The app will be built and get installed automatically if everything is correct.
 > While running for the first time, `Gradle task 'assembleDebug'...` might take a little time. 
 > After that, the app will be ready to use.
+
+
+![CSE564-Parker-Presentation](https://github.com/patelb268/Parker-Smart-Parking-Assistant/assets/109325051/11d26bb3-d663-4f26-8625-f283213a821f)
+![CSE564-Parker-Presentation (1)](https://github.com/patelb268/Parker-Smart-Parking-Assistant/assets/109325051/54a216b0-e3f7-4442-8a0c-d62cdc1f3f48)
+![CSE564-Parker-Presentation (2)](https://github.com/patelb268/Parker-Smart-Parking-Assistant/assets/109325051/248c782d-1527-4be1-906b-aa7a558ea2aa)
+![CSE564-Parker-Presentation (3)](https://github.com/patelb268/Parker-Smart-Parking-Assistant/assets/109325051/e32963a8-30d2-4661-adea-f60499e877bf)
+
